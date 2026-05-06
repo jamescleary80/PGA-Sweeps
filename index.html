@@ -556,31 +556,38 @@ function renderLeaderboard() {
   const rows = valid.map(e => {
     const s1=getScore(e.p1), s2=getScore(e.p2), s3=getScore(e.p3);
     const eliminated = [s1,s2,s3].some(s => s && (s.cut==='N'||s.cut==='WD'));
-    const totals = [s1,s2,s3].map(s => s&&s.total!==null?s.total:null);
-    const total = totals.some(v=>v!==null) ? totals.filter(v=>v!==null).reduce((a,b)=>a+b,0) : null;
-    const indiv = totals.filter(v=>v!==null).sort((a,b)=>a-b);
+
+    // Use toPar (vs par) for all scoring — most negative = best
+    const pars = [s1,s2,s3].map(s => s&&s.toPar!==null?s.toPar:null);
+    const combined = pars.some(v=>v!==null) ? pars.filter(v=>v!==null).reduce((a,b)=>a+b,0) : null;
+
+    // Tiebreak: best individual to-par (most negative first)
+    const indiv = pars.filter(v=>v!==null).sort((a,b)=>a-b);
     while(indiv.length<3) indiv.push(9999);
+
+    // R4 tiebreak: combined r4 strokes
     const r4Total = [s1,s2,s3].reduce((acc,s)=>acc+(s&&s.r4!==undefined?s.r4:0),0);
+
     let status='watch';
     if (eliminated) status='out';
     else if ([s1,s2,s3].every(s=>s&&s.cut==='Y')) status='in';
-    return {e,s1,s2,s3,eliminated,total,indiv,r4Total,status};
+    return {e,s1,s2,s3,eliminated,combined,indiv,r4Total,status};
   });
 
   rows.sort((a,b) => {
     if (a.eliminated!==b.eliminated) return a.eliminated?1:-1;
-    if (a.total===null&&b.total===null) return 0;
-    if (a.total===null) return 1;
-    if (b.total===null) return -1;
-    if (a.total!==b.total) return a.total-b.total;
+    if (a.combined===null&&b.combined===null) return 0;
+    if (a.combined===null) return 1;
+    if (b.combined===null) return -1;
+    if (a.combined!==b.combined) return a.combined-b.combined; // most negative first
     for(let i=0;i<3;i++) if(a.indiv[i]!==b.indiv[i]) return a.indiv[i]-b.indiv[i];
     return a.r4Total-b.r4Total;
   });
 
   let pos=1;
   rows.forEach((r,i) => {
-    if (r.eliminated||r.total===null) { r.pos='—'; return; }
-    if (i>0&&!rows[i-1].eliminated&&rows[i-1].total!==null&&rows[i-1].total===r.total&&JSON.stringify(rows[i-1].indiv)===JSON.stringify(r.indiv)) r.pos=rows[i-1].pos;
+    if (r.eliminated||r.combined===null) { r.pos='—'; return; }
+    if (i>0&&!rows[i-1].eliminated&&rows[i-1].combined!==null&&rows[i-1].combined===r.combined&&JSON.stringify(rows[i-1].indiv)===JSON.stringify(r.indiv)) r.pos=rows[i-1].pos;
     else r.pos=pos;
     pos++;
   });
@@ -592,7 +599,7 @@ function renderLeaderboard() {
     if (!s) return `<td style="background:#ffe082;font-size:.75rem;font-weight:600" title="Check spelling">${esc(pname)}</td><td style="background:#ffe082">?</td>`;
     const cut = s.cut==='N'||s.cut==='WD';
     const nameBg = cut ? '#ef9a9a' : '#fff59d';
-    const scoreVal = s.toPar && s.toPar!=='-' && s.toPar!=='0' ? s.toPar : (s.total!==null?s.total:'—');
+    const scoreVal = s.toPar!==null ? (s.toPar===0?'E':s.toPar>0?'+'+s.toPar:s.toPar) : (s.toParStr||'—');
     const scoreBg = cut ? '#e57373' : '#ffee58';
     const scoreColor = cut ? 'white' : '#1a3a0a';
     const label = cut ? (s.cut==='WD'?'WD':'MC') : (s.total!==null?scoreVal:'—');
@@ -608,13 +615,14 @@ function renderLeaderboard() {
 
   document.getElementById('lb-body').innerHTML = rows.map(r => {
     const rowBg = r.eliminated ? 'background:#fde8e8' : '';
-    const totalColor = r.eliminated ? '#c0392b' : (r.total!==null && r.total < 0 ? '#1a6b3a' : r.total!==null && r.total > 0 ? '#c0392b' : '#333');
-    const totalStr = r.total!==null ? (r.total>0?'+'+r.total:r.total) : '—';
+    const c = r.combined;
+    const totalColor = r.eliminated ? '#c0392b' : (c!==null && c < 0 ? '#1a6b3a' : c!==null && c > 0 ? '#c0392b' : '#555');
+    const totalStr = c!==null ? (c===0 ? 'E' : c>0 ? '+'+c : c) : '—';
     return `
     <tr style="${rowBg}">
       <td style="text-align:center">${posBadge(r.pos)}</td>
       <td style="font-weight:700;font-size:.88rem">${esc(r.e.name)}</td>
-      <td style="font-family:'EB Garamond',serif;font-weight:800;font-size:1rem;color:${totalColor};text-align:center">${totalStr}</td>
+      <td style="font-family:'EB Garamond',serif;font-weight:800;font-size:1.1rem;color:${totalColor};text-align:center">${totalStr}</td>
       ${pickCells(r.s1,r.e.p1)}
       ${pickCells(r.s2,r.e.p2)}
       ${pickCells(r.s3,r.e.p3)}
