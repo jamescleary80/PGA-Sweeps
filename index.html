@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PGA Championship Sweepstake 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --green-dark:#0a3d1f;--green-mid:#1a6b3a;--green-light:#2d9e58;
@@ -13,18 +13,18 @@
     --red:#c0392b;--text-dark:#1a1510;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'DM Sans',sans-serif;background:var(--green-dark);color:var(--text-dark);min-height:100vh;}
+  body{font-family:'EB Garamond',serif;background:var(--green-dark);color:var(--text-dark);min-height:100vh;}
 
   .site-header{background:linear-gradient(135deg,var(--green-dark) 0%,#0f4d28 60%,#1a6b3a 100%);padding:24px 20px 16px;text-align:center;border-bottom:3px solid var(--gold);position:relative;overflow:hidden;}
   .site-header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(201,168,76,.04) 40px,rgba(201,168,76,.04) 41px);}
-  .site-header h1{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,5vw,2.2rem);color:var(--gold-light);letter-spacing:.02em;line-height:1.1;position:relative;}
+  .site-header h1{font-family:'EB Garamond',serif;font-size:clamp(1.4rem,5vw,2.2rem);color:var(--gold-light);letter-spacing:.02em;line-height:1.1;position:relative;}
   .site-header .sub{color:rgba(240,208,128,.7);font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;margin-top:5px;font-weight:500;}
   .live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(192,57,43,.85);color:white;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:10px;margin-top:8px;}
   .live-dot{width:7px;height:7px;border-radius:50%;background:#ff6b6b;animation:pulse 1.2s infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
   .tabs{display:flex;background:var(--green-dark);border-bottom:2px solid var(--gold);}
-  .tab-btn{flex:1;padding:13px 6px;background:transparent;border:none;color:rgba(240,208,128,.5);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;margin-bottom:-2px;}
+  .tab-btn{flex:1;padding:13px 6px;background:transparent;border:none;color:rgba(240,208,128,.5);font-family:'EB Garamond',serif;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;margin-bottom:-2px;}
   .tab-btn.active{color:var(--gold-light);border-bottom-color:var(--gold);background:rgba(201,168,76,.08);}
   .tab-btn:hover:not(.active){color:rgba(240,208,128,.8);}
 
@@ -32,7 +32,7 @@
   .sync-status{display:flex;align-items:center;gap:5px;}
   .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--grey-mid);}
   .sync-dot.ok{background:#2ecc71;} .sync-dot.err{background:#e74c3c;} .sync-dot.spin{background:var(--gold);animation:pulse 1s infinite;}
-  .sync-bar select,.sync-bar button{font-family:'DM Sans',sans-serif;font-size:.72rem;padding:3px 8px;border-radius:5px;border:1px solid rgba(201,168,76,.3);background:rgba(255,255,255,.08);color:var(--gold-light);cursor:pointer;}
+  .sync-bar select,.sync-bar button{font-family:'EB Garamond',serif;font-size:.72rem;padding:3px 8px;border-radius:5px;border:1px solid rgba(201,168,76,.3);background:rgba(255,255,255,.08);color:var(--gold-light);cursor:pointer;}
   .sync-bar select option{background:#0a3d1f;color:white;}
   .sync-bar button:hover{background:rgba(255,255,255,.15);}
 
@@ -41,7 +41,7 @@
 
   .card{background:var(--cream);border-radius:10px;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 14px rgba(0,0,0,.28);}
   .card-header{background:var(--green-mid);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-  .card-header h2{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);flex:1;}
+  .card-header h2{font-family:'EB Garamond',serif;font-size:1rem;color:var(--gold-light);flex:1;}
   .card-body{padding:16px;}
 
   .lb-meta{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:var(--green-mid);color:rgba(240,208,128,.8);font-size:.73rem;}
@@ -52,12 +52,12 @@
   .lb-table tr:nth-child(even) td{background:var(--grey-light);}
   .lb-table td:nth-child(2){text-align:left;font-weight:600;}
 
-  .pos-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-weight:700;font-family:'DM Mono',monospace;font-size:.8rem;}
+  .pos-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-weight:700;font-family:'EB Garamond',serif;font-size:.8rem;}
   .pos-1{background:var(--gold);color:var(--green-dark);} .pos-2{background:#bfc0bf;color:#333;} .pos-3{background:#cd7f32;color:white;} .pos-o{background:var(--grey-light);color:var(--grey-dark);}
 
-  .score-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace;font-size:.79rem;font-weight:500;}
+  .score-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'EB Garamond',serif;font-size:.79rem;font-weight:500;}
   .pill-ok{background:#d5f5e3;color:#1a6b3a;} .pill-na{background:var(--grey-light);color:var(--grey-dark);} .pill-cut{background:#fadbd8;color:#c0392b;font-style:italic;}
-  .total-big{font-family:'DM Mono',monospace;font-size:.98rem;font-weight:700;color:var(--green-dark);}
+  .total-big{font-family:'EB Garamond',serif;font-size:.98rem;font-weight:700;color:var(--green-dark);}
 
   .status-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.67rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
   .s-in{background:#d5f5e3;color:#1a6b3a;} .s-out{background:#fadbd8;color:#c0392b;} .s-watch{background:#fef9c3;color:#856404;}
@@ -65,8 +65,8 @@
 
   .entry-row{background:var(--white);border:1.5px solid var(--grey-mid);border-radius:8px;padding:10px 12px;margin-bottom:8px;}
   .entry-row-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-  .entry-num{font-family:'DM Mono',monospace;font-size:.75rem;font-weight:500;color:var(--grey-dark);width:22px;flex-shrink:0;text-align:center;}
-  input[type=text]{padding:7px 10px;border:1.5px solid var(--grey-mid);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--text-dark);background:var(--cream);outline:none;transition:border-color .15s;}
+  .entry-num{font-family:'EB Garamond',serif;font-size:.75rem;font-weight:500;color:var(--grey-dark);width:22px;flex-shrink:0;text-align:center;}
+  input[type=text]{padding:7px 10px;border:1.5px solid var(--grey-mid);border-radius:6px;font-family:'EB Garamond',serif;font-size:.87rem;color:var(--text-dark);background:var(--cream);outline:none;transition:border-color .15s;}
   input[type=text]:focus{border-color:var(--green-light);}
   input[type=text]::placeholder{color:var(--grey-dark);opacity:.55;}
   .players-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-left:30px;}
@@ -82,12 +82,12 @@
   .scores-table td{padding:5px 7px;border-bottom:1px solid var(--grey-mid);text-align:center;background:var(--white);}
   .scores-table tr:nth-child(even) td{background:var(--grey-light);}
   .scores-table td:first-child{text-align:left;font-weight:500;}
-  .rval{font-family:'DM Mono',monospace;font-size:.82rem;color:#1a6b3a;font-weight:600;}
+  .rval{font-family:'EB Garamond',serif;font-size:.82rem;color:#1a6b3a;font-weight:600;}
   .cut-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:700;}
   .cut-y{background:#d5f5e3;color:#1a6b3a;} .cut-n{background:#fadbd8;color:#c0392b;} .cut-q{background:var(--grey-light);color:var(--grey-dark);}
   .par-u{color:#1a6b3a;font-weight:700;} .par-ov{color:#c0392b;} .par-e{color:var(--grey-dark);}
 
-  .btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;border:none;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .15s;}
+  .btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;border:none;font-family:'EB Garamond',serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .15s;}
   .btn-primary{background:var(--green-light);color:white;} .btn-primary:hover{background:var(--green-mid);}
   .btn-gold{background:var(--gold);color:var(--green-dark);} .btn-gold:hover{background:var(--gold-light);}
   .btn-sm{padding:5px 10px;font-size:.73rem;}
@@ -114,7 +114,7 @@
 
 <header class="site-header">
   <h1>🏆 PGA Championship 2026</h1>
-  <p class="sub">Sweepstake Manager · Quail Hollow · May 15–18, 2026</p>
+  <p class="sub">Quail Hollow · May 15–18, 2026</p>
   <div><span class="live-badge"><span class="live-dot"></span>Live Scores via ESPN</span></div>
 </header>
 
@@ -415,7 +415,7 @@ function renderScoresTable() {
       <td style="font-weight:600">${esc(p.name)}</td>
       <td>${cutB(p.cut)}</td>
       <td>${rnd(p.r1)}</td><td>${rnd(p.r2)}</td><td>${rnd(p.r3)}</td><td>${rnd(p.r4)}</td>
-      <td style="font-family:'DM Mono',monospace;font-weight:700">${p.total !== null ? p.total : '—'}</td>
+      <td style="font-family:'EB Garamond',serif;font-weight:700">${p.total !== null ? p.total : '—'}</td>
       <td>${parC(p.toPar)}${p.thru > 0 && p.thru < 18 ? `<span style="font-size:.65rem;color:var(--grey-dark);margin-left:3px">/ ${p.thru}</span>` : ''}</td>
     </tr>`).join('');
 }
@@ -519,17 +519,17 @@ function renderEntries() {
         <div class="player-group">
           <label>Player 1</label>
           <input type="text" placeholder="Full name (copy from Scores)" value="${esc(e.p1)}" oninput="updateEntry('${e.id}','p1',this.value)">
-          <input type="text" placeholder="Odds e.g. 25/1" value="${esc(e.p1odds)}" oninput="updateEntry('${e.id}','p1odds',this.value)" style="font-family:'DM Mono',monospace;font-size:.8rem;margin-top:3px">
+          <input type="text" placeholder="Odds e.g. 25/1" value="${esc(e.p1odds)}" oninput="updateEntry('${e.id}','p1odds',this.value)" style="font-family:'EB Garamond',serif;font-size:.8rem;margin-top:3px">
         </div>
         <div class="player-group">
           <label>Player 2</label>
           <input type="text" placeholder="Full name" value="${esc(e.p2)}" oninput="updateEntry('${e.id}','p2',this.value)">
-          <input type="text" placeholder="Odds e.g. 20/1" value="${esc(e.p2odds)}" oninput="updateEntry('${e.id}','p2odds',this.value)" style="font-family:'DM Mono',monospace;font-size:.8rem;margin-top:3px">
+          <input type="text" placeholder="Odds e.g. 20/1" value="${esc(e.p2odds)}" oninput="updateEntry('${e.id}','p2odds',this.value)" style="font-family:'EB Garamond',serif;font-size:.8rem;margin-top:3px">
         </div>
         <div class="player-group">
           <label>Player 3</label>
           <input type="text" placeholder="Full name" value="${esc(e.p3)}" oninput="updateEntry('${e.id}','p3',this.value)">
-          <input type="text" placeholder="Odds e.g. 60/1" value="${esc(e.p3odds)}" oninput="updateEntry('${e.id}','p3odds',this.value)" style="font-family:'DM Mono',monospace;font-size:.8rem;margin-top:3px">
+          <input type="text" placeholder="Odds e.g. 60/1" value="${esc(e.p3odds)}" oninput="updateEntry('${e.id}','p3odds',this.value)" style="font-family:'EB Garamond',serif;font-size:.8rem;margin-top:3px">
         </div>
       </div>
       <div id="warn-${e.id}" style="display:none;margin-top:8px;padding:7px 10px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;font-size:.78rem;color:#856404;line-height:1.6"></div>
@@ -596,7 +596,7 @@ function renderLeaderboard() {
     const scoreBg = cut ? '#e57373' : '#ffee58';
     const scoreColor = cut ? 'white' : '#1a3a0a';
     const label = cut ? (s.cut==='WD'?'WD':'MC') : (s.total!==null?scoreVal:'—');
-    return `<td style="background:${nameBg};font-size:.75rem;font-weight:600;padding:5px 7px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'DM Mono',monospace;font-weight:700;font-size:.88rem">${label}</td>`;
+    return `<td style="background:${nameBg};font-size:.75rem;font-weight:600;padding:5px 7px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'EB Garamond',serif;font-weight:700;font-size:.88rem">${label}</td>`;
   }
   function posBadge(p) {
     if(p==='—') return `<span class="pos-badge pos-o">—</span>`;
@@ -614,7 +614,7 @@ function renderLeaderboard() {
     <tr style="${rowBg}">
       <td style="text-align:center">${posBadge(r.pos)}</td>
       <td style="font-weight:700;font-size:.88rem">${esc(r.e.name)}</td>
-      <td style="font-family:'DM Mono',monospace;font-weight:800;font-size:1rem;color:${totalColor};text-align:center">${totalStr}</td>
+      <td style="font-family:'EB Garamond',serif;font-weight:800;font-size:1rem;color:${totalColor};text-align:center">${totalStr}</td>
       ${pickCells(r.s1,r.e.p1)}
       ${pickCells(r.s2,r.e.p2)}
       ${pickCells(r.s3,r.e.p3)}
