@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGA Championship Sweepstake 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-dark:#0a3d1f;--green-mid:#1a6b3a;--green-light:#2d9e58;
+    --gold:#c9a84c;--gold-light:#f0d080;
+    --cream:#faf6ee;--white:#ffffff;--grey-light:#f4f1eb;--grey-mid:#d0cbc0;--grey-dark:#6b6560;
+    --red:#c0392b;--text-dark:#1a1510;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--green-dark);color:var(--text-dark);min-height:100vh;}
+
+  .site-header{background:linear-gradient(135deg,var(--green-dark) 0%,#0f4d28 60%,#1a6b3a 100%);padding:24px 20px 16px;text-align:center;border-bottom:3px solid var(--gold);position:relative;overflow:hidden;}
+  .site-header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(201,168,76,.04) 40px,rgba(201,168,76,.04) 41px);}
+  .site-header h1{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,5vw,2.2rem);color:var(--gold-light);letter-spacing:.02em;line-height:1.1;position:relative;}
+  .site-header .sub{color:rgba(240,208,128,.7);font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;margin-top:5px;font-weight:500;}
+  .live-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(192,57,43,.85);color:white;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:10px;margin-top:8px;}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:#ff6b6b;animation:pulse 1.2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .tabs{display:flex;background:var(--green-dark);border-bottom:2px solid var(--gold);}
+  .tab-btn{flex:1;padding:13px 6px;background:transparent;border:none;color:rgba(240,208,128,.5);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;margin-bottom:-2px;}
+  .tab-btn.active{color:var(--gold-light);border-bottom-color:var(--gold);background:rgba(201,168,76,.08);}
+  .tab-btn:hover:not(.active){color:rgba(240,208,128,.8);}
+
+  .sync-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 16px;background:#0d4f25;border-bottom:1px solid rgba(201,168,76,.2);font-size:.75rem;color:rgba(240,208,128,.8);}
+  .sync-status{display:flex;align-items:center;gap:5px;}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--grey-mid);}
+  .sync-dot.ok{background:#2ecc71;} .sync-dot.err{background:#e74c3c;} .sync-dot.spin{background:var(--gold);animation:pulse 1s infinite;}
+  .sync-bar select,.sync-bar button{font-family:'DM Sans',sans-serif;font-size:.72rem;padding:3px 8px;border-radius:5px;border:1px solid rgba(201,168,76,.3);background:rgba(255,255,255,.08);color:var(--gold-light);cursor:pointer;}
+  .sync-bar select option{background:#0a3d1f;color:white;}
+  .sync-bar button:hover{background:rgba(255,255,255,.15);}
+
+  .container{max-width:920px;margin:0 auto;padding:0 12px 40px;}
+  .tab-panel{display:none;padding-top:18px;} .tab-panel.active{display:block;}
+
+  .card{background:var(--cream);border-radius:10px;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 14px rgba(0,0,0,.28);}
+  .card-header{background:var(--green-mid);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .card-header h2{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);flex:1;}
+  .card-body{padding:16px;}
+
+  .lb-meta{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:var(--green-mid);color:rgba(240,208,128,.8);font-size:.73rem;}
+  .lb-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+  .lb-table th{background:var(--green-dark);color:var(--gold-light);padding:9px 8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.67rem;text-align:center;white-space:nowrap;}
+  .lb-table th:nth-child(2){text-align:left;}
+  .lb-table td{padding:8px 7px;border-bottom:1px solid var(--grey-mid);text-align:center;background:var(--white);vertical-align:middle;}
+  .lb-table tr:nth-child(even) td{background:var(--grey-light);}
+  .lb-table td:nth-child(2){text-align:left;font-weight:600;}
+
+  .pos-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-weight:700;font-family:'DM Mono',monospace;font-size:.8rem;}
+  .pos-1{background:var(--gold);color:var(--green-dark);} .pos-2{background:#bfc0bf;color:#333;} .pos-3{background:#cd7f32;color:white;} .pos-o{background:var(--grey-light);color:var(--grey-dark);}
+
+  .score-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace;font-size:.79rem;font-weight:500;}
+  .pill-ok{background:#d5f5e3;color:#1a6b3a;} .pill-na{background:var(--grey-light);color:var(--grey-dark);} .pill-cut{background:#fadbd8;color:#c0392b;font-style:italic;}
+  .total-big{font-family:'DM Mono',monospace;font-size:.98rem;font-weight:700;color:var(--green-dark);}
+
+  .status-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.67rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .s-in{background:#d5f5e3;color:#1a6b3a;} .s-out{background:#fadbd8;color:#c0392b;} .s-watch{background:#fef9c3;color:#856404;}
+  .eliminated td{opacity:.45;} .eliminated td{background:#fdf5f4!important;}
+
+  .entry-row{background:var(--white);border:1.5px solid var(--grey-mid);border-radius:8px;padding:10px 12px;margin-bottom:8px;}
+  .entry-row-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .entry-num{font-family:'DM Mono',monospace;font-size:.75rem;font-weight:500;color:var(--grey-dark);width:22px;flex-shrink:0;text-align:center;}
+  input[type=text]{padding:7px 10px;border:1.5px solid var(--grey-mid);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--text-dark);background:var(--cream);outline:none;transition:border-color .15s;}
+  input[type=text]:focus{border-color:var(--green-light);}
+  input[type=text]::placeholder{color:var(--grey-dark);opacity:.55;}
+  .players-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-left:30px;}
+  .player-group{display:flex;flex-direction:column;gap:4px;}
+  .player-group label{font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--grey-dark);}
+  .player-group input{width:100%;}
+  .combined-odds{font-size:.7rem;font-weight:600;padding:2px 7px;border-radius:4px;margin-left:auto;flex-shrink:0;}
+  .co-ok{background:#d5f5e3;color:#1a6b3a;border:1px solid #a9dfbf;} .co-low{background:#fadbd8;color:#c0392b;border:1px solid #f1948a;} .co-empty{background:var(--grey-light);color:var(--grey-dark);border:1px solid var(--grey-mid);}
+
+  .scores-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+  .scores-table th{background:var(--green-mid);color:var(--gold-light);padding:8px 7px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.68rem;text-align:center;white-space:nowrap;}
+  .scores-table th:first-child{text-align:left;}
+  .scores-table td{padding:5px 7px;border-bottom:1px solid var(--grey-mid);text-align:center;background:var(--white);}
+  .scores-table tr:nth-child(even) td{background:var(--grey-light);}
+  .scores-table td:first-child{text-align:left;font-weight:500;}
+  .rval{font-family:'DM Mono',monospace;font-size:.82rem;color:#1a6b3a;font-weight:600;}
+  .cut-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:700;}
+  .cut-y{background:#d5f5e3;color:#1a6b3a;} .cut-n{background:#fadbd8;color:#c0392b;} .cut-q{background:var(--grey-light);color:var(--grey-dark);}
+  .par-u{color:#1a6b3a;font-weight:700;} .par-ov{color:#c0392b;} .par-e{color:var(--grey-dark);}
+
+  .btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:7px;border:none;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .15s;}
+  .btn-primary{background:var(--green-light);color:white;} .btn-primary:hover{background:var(--green-mid);}
+  .btn-gold{background:var(--gold);color:var(--green-dark);} .btn-gold:hover{background:var(--gold-light);}
+  .btn-sm{padding:5px 10px;font-size:.73rem;}
+  .btn-danger{background:#e74c3c;color:white;} .btn-danger:hover{background:#c0392b;}
+
+  .save-ind{font-size:.72rem;color:var(--green-light);font-weight:600;opacity:0;transition:opacity .3s;}
+  .save-ind.show{opacity:1;}
+  .flex-gap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+  .rules-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+  .rules-list li{display:flex;gap:10px;font-size:.84rem;line-height:1.5;}
+  .rule-num{flex-shrink:0;width:22px;height:22px;background:var(--green-mid);color:var(--gold-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;margin-top:2px;}
+  .info-box{padding:12px;background:var(--grey-light);border-radius:8px;border-left:4px solid var(--gold);font-size:.82rem;line-height:1.6;color:var(--grey-dark);margin-top:16px;}
+  .lb-empty{text-align:center;padding:36px;color:var(--grey-dark);font-size:.88rem;}
+
+  @media(max-width:600px){
+    .players-grid{grid-template-columns:1fr;padding-left:0;margin-top:6px;}
+    .lb-table .hm{display:none;}
+    .lb-table td,.lb-table th{padding:6px 4px;font-size:.72rem;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>🏆 PGA Championship 2026</h1>
+  <p class="sub">Sweepstake Manager · Quail Hollow · May 15–18, 2026</p>
+  <div><span class="live-badge"><span class="live-dot"></span>Live Scores via ESPN</span></div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" onclick="showTab('leaderboard',this)">📊 Leaderboard</button>
+  <button class="tab-btn" onclick="showTab('entries',this)">📋 Entries</button>
+  <button class="tab-btn" onclick="showTab('scores',this)">⛳ Live Scores</button>
+  <button class="tab-btn" onclick="showTab('rules',this)">📜 Rules</button>
+</nav>
+
+<div class="sync-bar">
+  <div class="sync-status">
+    <span class="sync-dot" id="sync-dot"></span>
+    <span id="sync-text">Not yet synced</span>
+  </div>
+  <select id="event-select" onchange="onEventChange()">
+    <option value="">— Loading tournaments… —</option>
+  </select>
+  <button onclick="fetchScores(true)">↻ Sync Now</button>
+  <span id="last-sync" style="margin-left:auto;opacity:.6"></span>
+</div>
+
+<div class="container">
+
+  <!-- LEADERBOARD -->
+  <div id="tab-leaderboard" class="tab-panel active">
+    <div class="card">
+      <div class="card-header">
+        <h2>🏆 Sweepstake Leaderboard</h2>
+        <div class="flex-gap">
+          <span class="save-ind" id="lb-flash"></span>
+          <button class="btn btn-gold btn-sm" onclick="renderLeaderboard();flashSave('lb-flash','↻ Done')">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="lb-meta">
+        <span id="lb-event-name">PGA Championship 2026 · Sweepstake</span>
+        <span id="lb-date"></span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th style="width:40px">Pos</th>
+              <th style="text-align:left">Name</th>
+              <th style="width:55px">Total</th>
+              <th>Pick 1</th><th style="width:40px">S</th>
+              <th>Pick 2</th><th style="width:40px">S</th>
+              <th>Pick 3</th><th style="width:40px">S</th>
+            </tr>
+          </thead>
+          <tbody id="lb-body">
+            <tr><td colspan="10" class="lb-empty">Add entries in the Entries tab, then sync live scores using the dropdown above.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p style="color:rgba(240,208,128,.55);font-size:.72rem;text-align:center;margin-top:6px;">
+      Screenshot to share · Lower total strokes = better · ❌ = missed cut (eliminated)
+    </p>
+  </div>
+
+  <!-- ENTRIES -->
+  <div id="tab-entries" class="tab-panel">
+    <div class="card">
+      <div class="card-header">
+        <h2>📋 Entrants & Picks</h2>
+        <div class="flex-gap">
+          <span class="save-ind" id="entry-save-ind">✓ Saved</span>
+          <button class="btn btn-primary btn-sm" onclick="addEntry()">+ Add Entrant</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <p style="font-size:.8rem;color:var(--grey-dark);margin-bottom:12px;">
+          Enter each entrant's name, their 3 player picks and odds (e.g. <strong>25/1</strong>). Combined odds must be 101/1+.<br>
+          ⚠ Player names must <strong>exactly match</strong> the names shown in the Live Scores tab.
+        </p>
+        <div id="entries-container"></div>
+        <div style="margin-top:12px"><button class="btn btn-primary" onclick="addEntry()">+ Add Entrant</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVE SCORES -->
+  <div id="tab-scores" class="tab-panel">
+    <div class="card">
+      <div class="card-header">
+        <h2>⛳ Live Player Scores</h2>
+        <div class="flex-gap">
+          <span style="font-size:.72rem;color:rgba(240,208,128,.7)">Auto-fetched · updates every 3 min</span>
+          <button class="btn btn-gold btn-sm" onclick="fetchScores(true)">↻ Sync Now</button>
+        </div>
+      </div>
+      <div style="padding:8px 16px;background:#f0ede6;border-bottom:1px solid var(--grey-mid);font-size:.78rem;color:var(--grey-dark)">
+        ℹ Copy player names exactly from this table when entering picks above.
+      </div>
+      <div style="overflow-x:auto">
+        <table class="scores-table">
+          <thead><tr><th>Player</th><th>Cut?</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Total</th><th>To Par</th></tr></thead>
+          <tbody id="scores-body">
+            <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--grey-dark)">Select a tournament from the dropdown at the top and click ↻ Sync Now</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RULES -->
+  <div id="tab-rules" class="tab-panel">
+    <div class="card">
+      <div class="card-header"><h2>📜 Sweepstake Rules</h2></div>
+      <div class="card-body">
+        <ul class="rules-list">
+          <li><span class="rule-num">1</span><span>Pick <strong>3 players</strong> with a combined price of <strong>101/1 or higher</strong>.</span></li>
+          <li><span class="rule-num">2</span><span>All 3 picks must make the cut — if any miss the cut, <strong>you're out</strong>.</span></li>
+          <li><span class="rule-num">3</span><span>Entry fee: <strong>CHF 20.00</strong> via Revolut to <strong>@brianv87t</strong> (+41 79 413 2940) before the deadline.</span></li>
+          <li><span class="rule-num">4</span><span>Deadline: <strong>Thursday 11pm Irish time (10pm CET)</strong>.</span></li>
+          <li><span class="rule-num">5</span><span>Entry only valid once Revolut payment is confirmed.</span></li>
+          <li><span class="rule-num">6</span><span>Player withdrawing before end of R1 can be replaced by a random player of the same odds, or next highest if none available.</span></li>
+          <li><span class="rule-num">7</span><span>Duplicate picks of an existing paid entry must make an alternative selection.</span></li>
+          <li><span class="rule-num">8</span><span><strong>Tiebreak 1:</strong> Lowest individual player score wins, then second lowest.</span></li>
+          <li><span class="rule-num">9</span><span><strong>Tiebreak 2:</strong> Best combined R4 score for all 3 players.</span></li>
+          <li><span class="rule-num">10</span><span>If still tied, the <strong>prize is split</strong>.</span></li>
+          <li><span class="rule-num">11</span><span>Organiser's decision is final.</span></li>
+        </ul>
+        <div class="info-box">
+          <strong>💡 How the live scores work:</strong><br>
+          Scores are pulled automatically from ESPN's live golf feed every 3 minutes during the tournament. Select "PGA Championship" from the dropdown at the top of the page. Make sure player names in your entries match the names shown in the Live Scores tab exactly (e.g. "Rory McIlroy" not "R. McIlroy").
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────
+let entries = [];
+let liveScores = {};   // key = lowercase name
+let availableEvents = [];
+let selectedEventId = '';
+let syncTimer = null;
+
+// ── Persistence ──────────────────────────────────────────────
+function save() {
+  localStorage.setItem('pga26_entries', JSON.stringify(entries));
+  localStorage.setItem('pga26_eventId', selectedEventId);
+}
+function load() {
+  try { entries = JSON.parse(localStorage.getItem('pga26_entries')) || []; } catch(e) { entries = []; }
+  // Pre-seed entries if localStorage is empty (e.g. fresh download)
+  if (entries.length === 0) {
+    entries = [{"id":"mou5xv0s3sba","name":"James Cleary","p1":"Viktor Hovland","p1odds":"35/1","p2":"Hideki Matsuyama","p2odds":"35/1","p3":"Hideki Matsuyama","p3odds":"35/1"},{"id":"mou74mgizko5","name":"David Allen","p1":"Viktor Hovland","p1odds":"35/1","p2":"Rickie Fowler","p2odds":"35/1","p3":"Hideki Matsuyama","p3odds":"35/1"}];
+    save(); // persist to localStorage straight away
+  }
+  selectedEventId = localStorage.getItem('pga26_eventId') || '';
+}
+
+// ── Tabs ─────────────────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'leaderboard') renderLeaderboard();
+}
+
+// ── ESPN API ─────────────────────────────────────────────────
+const ESPN_API = 'https://site.api.espn.com/apis/site/v2/sports/golf/leaderboard?league=pga';
+function setSyncState(state, msg) {
+  document.getElementById('sync-dot').className = 'sync-dot ' + state;
+  document.getElementById('sync-text').textContent = msg;
+}
+
+async function loadEventList() {
+  setSyncState('spin', 'Loading tournaments…');
+  try {
+    const res = await fetch(ESPN_API);
+    const data = await res.json();
+    availableEvents = (data.events || []).map(e => ({ id: e.id, name: e.name, competitions: e.competitions }));
+
+    const sel = document.getElementById('event-select');
+    sel.innerHTML = '<option value="">— Select tournament —</option>';
+    availableEvents.forEach(ev => {
+      const opt = document.createElement('option');
+      opt.value = ev.id;
+      opt.textContent = ev.name;
+      if (ev.id === selectedEventId) opt.selected = true;
+      sel.appendChild(opt);
+    });
+
+    // Auto-select PGA Championship if present and nothing chosen yet
+    if (!selectedEventId) {
+      const pga = availableEvents.find(e => e.name.toLowerCase().includes('pga championship'));
+      if (pga) { sel.value = pga.id; selectedEventId = pga.id; save(); }
+    }
+
+    setSyncState('ok', 'Ready');
+    if (selectedEventId) fetchScores(false);
+  } catch(e) {
+    setSyncState('err', 'Failed to load — check connection');
+  }
+}
+
+async function fetchScores(manual) {
+  if (!selectedEventId) { setSyncState('err', 'Select a tournament first'); return; }
+  setSyncState('spin', 'Syncing scores…');
+  try {
+    const res = await fetch(ESPN_API);
+    const data = await res.json();
+
+    const event = (data.events || []).find(e => e.id === selectedEventId);
+    if (!event) { setSyncState('err', 'Tournament not found in feed'); return; }
+
+    document.getElementById('lb-event-name').textContent = event.name + ' · Sweepstake';
+
+    const competitors = event.competitions[0].competitors || [];
+    liveScores = {};
+
+    competitors.forEach(c => {
+      const name = c.athlete.displayName;
+      const stype = c.status.type.name;
+
+      let cut = '?';
+      if (['STATUS_CUT','STATUS_MDF'].includes(stype)) cut = 'N';
+      else if (['STATUS_ACTIVE','STATUS_COMPLETE','STATUS_PLAYOFF'].includes(stype)) cut = 'Y';
+      else if (['STATUS_WD','STATUS_DQ'].includes(stype)) cut = 'WD';
+
+      const rounds = {};
+      (c.linescores || []).forEach(ls => {
+        if (ls.period && ls.displayValue && ls.displayValue !== '--' && ls.displayValue !== '-') {
+          const v = parseInt(ls.displayValue);
+          if (!isNaN(v)) rounds['r' + ls.period] = v;
+        }
+      });
+
+      const vals = [rounds.r1,rounds.r2,rounds.r3,rounds.r4].filter(v => v !== undefined);
+      const total = vals.length ? vals.reduce((a,b) => a+b, 0) : null;
+
+      liveScores[name.toLowerCase()] = {
+        name, cut,
+        r1: rounds.r1, r2: rounds.r2, r3: rounds.r3, r4: rounds.r4,
+        total, toPar: c.score.displayValue, thru: c.status.thru || 0, stype
+      };
+    });
+
+    const now = new Date();
+    document.getElementById('last-sync').textContent = 'Synced ' + now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    setSyncState('ok', competitors.length + ' players loaded');
+
+    renderScoresTable();
+    renderLeaderboard();
+
+    clearInterval(syncTimer);
+    syncTimer = setInterval(() => fetchScores(false), 3 * 60 * 1000);
+  } catch(e) {
+    setSyncState('err', 'Sync failed — check connection');
+    console.error(e);
+  }
+}
+
+function onEventChange() {
+  selectedEventId = document.getElementById('event-select').value;
+  save();
+  if (selectedEventId) fetchScores(true);
+}
+
+// ── Scores table ─────────────────────────────────────────────
+function renderScoresTable() {
+  const tbody = document.getElementById('scores-body');
+  const players = Object.values(liveScores).sort((a,b) => {
+    if (a.total !== null && b.total !== null) return a.total - b.total;
+    if (a.total !== null) return -1;
+    if (b.total !== null) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  if (!players.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--grey-dark)">No scores yet — tournament may not have started.</td></tr>';
+    return;
+  }
+
+  function cutB(cut) {
+    if (cut==='Y') return '<span class="cut-badge cut-y">✓ Yes</span>';
+    if (cut==='N') return '<span class="cut-badge cut-n">✗ MC</span>';
+    if (cut==='WD') return '<span class="cut-badge cut-n">WD</span>';
+    return '<span class="cut-badge cut-q">TBC</span>';
+  }
+  function rnd(v) { return v !== undefined ? `<span class="rval">${v}</span>` : '<span style="color:var(--grey-mid)">—</span>'; }
+  function parC(s) {
+    if (!s||s==='-') return '<span class="par-e">—</span>';
+    if (s==='E') return '<span class="par-e">E</span>';
+    if (s.startsWith('-')) return `<span class="par-u">${s}</span>`;
+    return `<span class="par-ov">${s}</span>`;
+  }
+
+  tbody.innerHTML = players.map(p => `
+    <tr>
+      <td style="font-weight:600">${esc(p.name)}</td>
+      <td>${cutB(p.cut)}</td>
+      <td>${rnd(p.r1)}</td><td>${rnd(p.r2)}</td><td>${rnd(p.r3)}</td><td>${rnd(p.r4)}</td>
+      <td style="font-family:'DM Mono',monospace;font-weight:700">${p.total !== null ? p.total : '—'}</td>
+      <td>${parC(p.toPar)}${p.thru > 0 && p.thru < 18 ? `<span style="font-size:.65rem;color:var(--grey-dark);margin-left:3px">/ ${p.thru}</span>` : ''}</td>
+    </tr>`).join('');
+}
+
+// ── Entries ───────────────────────────────────────────────────
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+function addEntry() {
+  entries.push({id:uid(),name:'',p1:'',p1odds:'',p2:'',p2odds:'',p3:'',p3odds:''});
+  renderEntries(); save();
+  setTimeout(() => { const c=document.getElementById('entries-container'); c.lastElementChild&&c.lastElementChild.scrollIntoView({behavior:'smooth',block:'end'}); }, 60);
+}
+function removeEntry(id) {
+  if (!confirm('Remove this entrant?')) return;
+  entries = entries.filter(e => e.id !== id); renderEntries(); save();
+}
+function updateEntry(id, field, value) {
+  const e = entries.find(e => e.id === id);
+  if (e) { e[field] = value; save(); }
+  const badge = document.getElementById('co-' + id);
+  if (badge && e) {
+    const co = combinedOdds(e);
+    if (co===null) { badge.textContent='—'; badge.className='combined-odds co-empty'; }
+    else if (co>=101) { badge.textContent='✓ '+formatOdds(co); badge.className='combined-odds co-ok'; }
+    else { badge.textContent='✗ '+formatOdds(co); badge.className='combined-odds co-low'; }
+  }
+  // Check for warnings on this entry
+  updateWarnings(id);
+  flashSave('entry-save-ind','✓ Saved');
+}
+
+function normName(s) { return (s||'').trim().toLowerCase(); }
+
+function updateWarnings(id) {
+  const e = entries.find(e => e.id === id);
+  if (!e) return;
+  const warn = document.getElementById('warn-' + id);
+  if (!warn) return;
+  const warnings = [];
+
+  // 1. Duplicate player within same entry
+  const picks = [e.p1, e.p2, e.p3].map(normName).filter(p => p !== '');
+  const dupes = picks.filter((p, i) => picks.indexOf(p) !== i);
+  if (dupes.length > 0) {
+    warnings.push('⚠️ Duplicate pick: <strong>' + esc(e['p'+(picks.indexOf(dupes[0])+1)]) + '</strong> appears more than once in this entry');
+  }
+
+  // 2. Same 3 picks as another entrant (regardless of order)
+  if (picks.length === 3) {
+    const sortedPicks = [...picks].sort().join('|');
+    const clash = entries.find(other => {
+      if (other.id === id) return false;
+      const otherPicks = [other.p1, other.p2, other.p3].map(normName).filter(p => p !== '');
+      if (otherPicks.length !== 3) return false;
+      return [...otherPicks].sort().join('|') === sortedPicks;
+    });
+    if (clash) {
+      warnings.push('⚠️ Same 3 picks as <strong>' + esc(clash.name || 'another entrant') + '</strong> — must choose different players');
+    }
+  }
+
+  warn.innerHTML = warnings.join('<br>');
+  warn.style.display = warnings.length ? 'block' : 'none';
+}
+
+function refreshAllWarnings() {
+  entries.forEach(e => updateWarnings(e.id));
+}
+
+function parseOdds(s) {
+  if (!s) return null; s=s.trim().replace(/\s+/g,'');
+  if (s.includes('/')) { const[n,d]=s.split('/').map(Number); if(!isNaN(n)&&!isNaN(d)&&d>0) return n/d; }
+  const n=parseFloat(s); return isNaN(n)?null:n;
+}
+function combinedOdds(e) {
+  const o1=parseOdds(e.p1odds),o2=parseOdds(e.p2odds),o3=parseOdds(e.p3odds);
+  if (o1===null||o2===null||o3===null) return null;
+  return o1+o2+o3;
+}
+function formatOdds(n) { return Math.round(n)+'/1'; }
+
+function renderEntries() {
+  const c = document.getElementById('entries-container');
+  if (!entries.length) {
+    c.innerHTML='<p style="color:var(--grey-dark);text-align:center;padding:20px;font-size:.85rem">No entrants yet. Click "+ Add Entrant".</p>';
+    return;
+  }
+  c.innerHTML = entries.map((e,i) => {
+    const co=combinedOdds(e);
+    let bc='co-empty',bt='—';
+    if (co!==null) { bc=co>=101?'co-ok':'co-low'; bt=(co>=101?'✓ ':'✗ ')+formatOdds(co); }
+    return `
+    <div class="entry-row">
+      <div class="entry-row-top">
+        <span class="entry-num">${i+1}</span>
+        <input type="text" placeholder="Entrant name" value="${esc(e.name)}" style="flex:1;font-weight:600" oninput="updateEntry('${e.id}','name',this.value)">
+        <span class="combined-odds ${bc}" id="co-${e.id}">${bt}</span>
+        <button class="btn btn-danger btn-sm" onclick="removeEntry('${e.id}')">✕</button>
+      </div>
+      <div class="players-grid">
+        <div class="player-group">
+          <label>Player 1</label>
+          <input type="text" placeholder="Full name (copy from Scores)" value="${esc(e.p1)}" oninput="updateEntry('${e.id}','p1',this.value)">
+          <input type="text" placeholder="Odds e.g. 25/1" value="${esc(e.p1odds)}" oninput="updateEntry('${e.id}','p1odds',this.value)" style="font-family:'DM Mono',monospace;font-size:.8rem;margin-top:3px">
+        </div>
+        <div class="player-group">
+          <label>Player 2</label>
+          <input type="text" placeholder="Full name" value="${esc(e.p2)}" oninput="updateEntry('${e.id}','p2',this.value)">
+          <input type="text" placeholder="Odds e.g. 20/1" value="${esc(e.p2odds)}" oninput="updateEntry('${e.id}','p2odds',this.value)" style="font-family:'DM Mono',monospace;font-size:.8rem;margin-top:3px">
+        </div>
+        <div class="player-group">
+          <label>Player 3</label>
+          <input type="text" placeholder="Full name" value="${esc(e.p3)}" oninput="updateEntry('${e.id}','p3',this.value)">
+          <input type="text" placeholder="Odds e.g. 60/1" value="${esc(e.p3odds)}" oninput="updateEntry('${e.id}','p3odds',this.value)" style="font-family:'DM Mono',monospace;font-size:.8rem;margin-top:3px">
+        </div>
+      </div>
+      <div id="warn-${e.id}" style="display:none;margin-top:8px;padding:7px 10px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;font-size:.78rem;color:#856404;line-height:1.6"></div>
+    </div>`;
+  }).join('');
+  // Run warning checks after render
+  setTimeout(() => entries.forEach(e => updateWarnings(e.id)), 0);
+}
+
+// ── Leaderboard ───────────────────────────────────────────────
+function getScore(name) {
+  if (!name||!name.trim()) return null;
+  return liveScores[name.trim().toLowerCase()] || null;
+}
+
+function renderLeaderboard() {
+  document.getElementById('lb-date').textContent = new Date().toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  const valid = entries.filter(e => e.name.trim());
+  if (!valid.length) {
+    document.getElementById('lb-body').innerHTML='<tr><td colspan="9" class="lb-empty">No entries yet. Add entrants in the Entries tab.</td></tr>';
+    return;
+  }
+
+  const rows = valid.map(e => {
+    const s1=getScore(e.p1), s2=getScore(e.p2), s3=getScore(e.p3);
+    const eliminated = [s1,s2,s3].some(s => s && (s.cut==='N'||s.cut==='WD'));
+    const totals = [s1,s2,s3].map(s => s&&s.total!==null?s.total:null);
+    const total = totals.some(v=>v!==null) ? totals.filter(v=>v!==null).reduce((a,b)=>a+b,0) : null;
+    const indiv = totals.filter(v=>v!==null).sort((a,b)=>a-b);
+    while(indiv.length<3) indiv.push(9999);
+    const r4Total = [s1,s2,s3].reduce((acc,s)=>acc+(s&&s.r4!==undefined?s.r4:0),0);
+    let status='watch';
+    if (eliminated) status='out';
+    else if ([s1,s2,s3].every(s=>s&&s.cut==='Y')) status='in';
+    return {e,s1,s2,s3,eliminated,total,indiv,r4Total,status};
+  });
+
+  rows.sort((a,b) => {
+    if (a.eliminated!==b.eliminated) return a.eliminated?1:-1;
+    if (a.total===null&&b.total===null) return 0;
+    if (a.total===null) return 1;
+    if (b.total===null) return -1;
+    if (a.total!==b.total) return a.total-b.total;
+    for(let i=0;i<3;i++) if(a.indiv[i]!==b.indiv[i]) return a.indiv[i]-b.indiv[i];
+    return a.r4Total-b.r4Total;
+  });
+
+  let pos=1;
+  rows.forEach((r,i) => {
+    if (r.eliminated||r.total===null) { r.pos='—'; return; }
+    if (i>0&&!rows[i-1].eliminated&&rows[i-1].total!==null&&rows[i-1].total===r.total&&JSON.stringify(rows[i-1].indiv)===JSON.stringify(r.indiv)) r.pos=rows[i-1].pos;
+    else r.pos=pos;
+    pos++;
+  });
+
+  function pickCells(s, pname) {
+    // Returns two <td>s: player name cell + score cell
+    // Colour: yellow bg if alive, red bg if cut/WD, grey if unknown
+    if (!pname||!pname.trim()) return `<td style="background:#e0e0e0;color:#999;font-size:.75rem">—</td><td style="background:#e0e0e0;color:#999">—</td>`;
+    if (!s) return `<td style="background:#ffe082;font-size:.75rem;font-weight:600" title="Check spelling">${esc(pname)}</td><td style="background:#ffe082">?</td>`;
+    const cut = s.cut==='N'||s.cut==='WD';
+    const nameBg = cut ? '#ef9a9a' : '#fff59d';
+    const scoreVal = s.toPar && s.toPar!=='-' && s.toPar!=='0' ? s.toPar : (s.total!==null?s.total:'—');
+    const scoreBg = cut ? '#e57373' : '#ffee58';
+    const scoreColor = cut ? 'white' : '#1a3a0a';
+    const label = cut ? (s.cut==='WD'?'WD':'MC') : (s.total!==null?scoreVal:'—');
+    return `<td style="background:${nameBg};font-size:.75rem;font-weight:600;padding:5px 7px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'DM Mono',monospace;font-weight:700;font-size:.88rem">${label}</td>`;
+  }
+  function posBadge(p) {
+    if(p==='—') return `<span class="pos-badge pos-o">—</span>`;
+    if(p===1) return `<span class="pos-badge pos-1">1</span>`;
+    if(p===2) return `<span class="pos-badge pos-2">2</span>`;
+    if(p===3) return `<span class="pos-badge pos-3">3</span>`;
+    return `<span class="pos-badge pos-o">${p}</span>`;
+  }
+
+  document.getElementById('lb-body').innerHTML = rows.map(r => {
+    const rowBg = r.eliminated ? 'background:#fde8e8' : '';
+    const totalColor = r.eliminated ? '#c0392b' : (r.total!==null && r.total < 0 ? '#1a6b3a' : r.total!==null && r.total > 0 ? '#c0392b' : '#333');
+    const totalStr = r.total!==null ? (r.total>0?'+'+r.total:r.total) : '—';
+    return `
+    <tr style="${rowBg}">
+      <td style="text-align:center">${posBadge(r.pos)}</td>
+      <td style="font-weight:700;font-size:.88rem">${esc(r.e.name)}</td>
+      <td style="font-family:'DM Mono',monospace;font-weight:800;font-size:1rem;color:${totalColor};text-align:center">${totalStr}</td>
+      ${pickCells(r.s1,r.e.p1)}
+      ${pickCells(r.s2,r.e.p2)}
+      ${pickCells(r.s3,r.e.p3)}
+    </tr>`;
+  }).join('');
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function flashSave(id,msg){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2000);}
+
+// ── Init ─────────────────────────────────────────────────────
+load();
+renderEntries();
+renderLeaderboard();
+loadEventList();
+</script>
+</body>
+</html>
