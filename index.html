@@ -353,10 +353,19 @@ async function fetchScores(manual) {
       const vals = [rounds.r1,rounds.r2,rounds.r3,rounds.r4].filter(v => v !== undefined);
       const total = vals.length ? vals.reduce((a,b) => a+b, 0) : null;
 
+      // Parse toPar as a number: "E"=0, "-5"=-5, "+3"=3, "-"=null
+      const toParRaw = c.score.displayValue;
+      let toPar = null;
+      if (toParRaw === 'E') toPar = 0;
+      else if (toParRaw && toParRaw !== '-' && toParRaw !== '--') {
+        const n = parseInt(toParRaw);
+        if (!isNaN(n)) toPar = n;
+      }
+
       liveScores[name.toLowerCase()] = {
         name, cut,
         r1: rounds.r1, r2: rounds.r2, r3: rounds.r3, r4: rounds.r4,
-        total, toPar: c.score.displayValue, thru: c.status.thru || 0, stype
+        total, toPar, thru: c.status.thru || 0, stype
       };
     });
 
@@ -599,7 +608,7 @@ function renderLeaderboard() {
     if (!s) return `<td style="background:#ffe082;font-size:.75rem;font-weight:600" title="Check spelling">${esc(pname)}</td><td style="background:#ffe082">?</td>`;
     const cut = s.cut==='N'||s.cut==='WD';
     const nameBg = cut ? '#ef9a9a' : '#fff59d';
-    const scoreVal = s.toPar!==null ? (s.toPar===0?'E':s.toPar>0?'+'+s.toPar:s.toPar) : (s.toParStr||'—');
+    const scoreVal = s.toPar!==null ? (s.toPar===0?'E':s.toPar>0?'+'+s.toPar:s.toPar) : '—';
     const scoreBg = cut ? '#e57373' : '#ffee58';
     const scoreColor = cut ? 'white' : '#1a3a0a';
     const label = cut ? (s.cut==='WD'?'WD':'MC') : (s.total!==null?scoreVal:'—');
