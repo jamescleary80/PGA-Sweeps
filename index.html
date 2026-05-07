@@ -52,8 +52,7 @@
   .lb-table tr:nth-child(even) td{background:var(--grey-light);}
   .lb-table td:nth-child(2){text-align:left;font-weight:600;}
 
-  .pos-badge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-weight:700;font-family:'EB Garamond',serif;font-size:.65rem;}
-  .pos-1{background:var(--gold);color:var(--green-dark);} .pos-2{background:#bfc0bf;color:#333;} .pos-3{background:#cd7f32;color:white;} .pos-o{background:var(--grey-light);color:var(--grey-dark);}
+
 
   .score-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'EB Garamond',serif;font-size:.79rem;font-weight:500;}
   .pill-ok{background:#d5f5e3;color:#1a6b3a;} .pill-na{background:var(--grey-light);color:var(--grey-dark);} .pill-cut{background:#fadbd8;color:#c0392b;font-style:italic;}
@@ -619,11 +618,7 @@ function renderLeaderboard() {
     return `<td style="background:${nameBg};font-size:.75rem;font-weight:600;padding:5px 7px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'EB Garamond',serif;font-weight:700;font-size:.88rem">${label}</td>`;
   }
   function posBadge(p) {
-    if(p==='—') return `<span class="pos-badge pos-o">—</span>`;
-    if(p===1) return `<span class="pos-badge pos-1">1</span>`;
-    if(p===2) return `<span class="pos-badge pos-2">2</span>`;
-    if(p===3) return `<span class="pos-badge pos-3">3</span>`;
-    return `<span class="pos-badge pos-o">${p}</span>`;
+    return `<span style="font-weight:700;font-size:.75rem">${p}</span>`;
   }
 
   document.getElementById('lb-body').innerHTML = rows.map(r => {
