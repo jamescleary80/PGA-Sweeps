@@ -353,13 +353,16 @@ async function fetchScores(manual) {
       const vals = [rounds.r1,rounds.r2,rounds.r3,rounds.r4].filter(v => v !== undefined);
       const total = vals.length ? vals.reduce((a,b) => a+b, 0) : null;
 
-      // Parse toPar as a number: "E"=0, "-5"=-5, "+3"=3, "-"=null
-      const toParRaw = c.score.displayValue;
+      // Get toPar from statistics array (scoreToPar) — this is the correct field
+      // c.score.displayValue is total strokes, NOT to-par
       let toPar = null;
-      if (toParRaw === 'E') toPar = 0;
-      else if (toParRaw && toParRaw !== '-' && toParRaw !== '--') {
-        const n = parseInt(toParRaw);
-        if (!isNaN(n)) toPar = n;
+      const scoreToParStat = (c.statistics || []).find(s => s.name === 'scoreToPar');
+      if (scoreToParStat && scoreToParStat.displayValue && scoreToParStat.displayValue !== '-') {
+        if (scoreToParStat.displayValue === 'E') toPar = 0;
+        else {
+          const n = parseInt(scoreToParStat.displayValue);
+          if (!isNaN(n)) toPar = n;
+        }
       }
 
       liveScores[name.toLowerCase()] = {
@@ -394,9 +397,10 @@ function onEventChange() {
 function renderScoresTable() {
   const tbody = document.getElementById('scores-body');
   const players = Object.values(liveScores).sort((a,b) => {
-    if (a.total !== null && b.total !== null) return a.total - b.total;
-    if (a.total !== null) return -1;
-    if (b.total !== null) return 1;
+    // Sort by toPar (most negative first), then alphabetically
+    if (a.toPar !== null && b.toPar !== null) return a.toPar - b.toPar;
+    if (a.toPar !== null) return -1;
+    if (b.toPar !== null) return 1;
     return a.name.localeCompare(b.name);
   });
 
@@ -412,11 +416,11 @@ function renderScoresTable() {
     return '<span class="cut-badge cut-q">TBC</span>';
   }
   function rnd(v) { return v !== undefined ? `<span class="rval">${v}</span>` : '<span style="color:var(--grey-mid)">—</span>'; }
-  function parC(s) {
-    if (!s||s==='-') return '<span class="par-e">—</span>';
-    if (s==='E') return '<span class="par-e">E</span>';
-    if (s.startsWith('-')) return `<span class="par-u">${s}</span>`;
-    return `<span class="par-ov">${s}</span>`;
+  function parDisp(n) {
+    if (n === null) return '<span class="par-e">—</span>';
+    if (n === 0) return '<span class="par-e">E</span>';
+    if (n < 0) return `<span class="par-u">${n}</span>`;
+    return `<span class="par-ov">+${n}</span>`;
   }
 
   tbody.innerHTML = players.map(p => `
@@ -425,7 +429,7 @@ function renderScoresTable() {
       <td>${cutB(p.cut)}</td>
       <td>${rnd(p.r1)}</td><td>${rnd(p.r2)}</td><td>${rnd(p.r3)}</td><td>${rnd(p.r4)}</td>
       <td style="font-family:'EB Garamond',serif;font-weight:700">${p.total !== null ? p.total : '—'}</td>
-      <td>${parC(p.toPar)}${p.thru > 0 && p.thru < 18 ? `<span style="font-size:.65rem;color:var(--grey-dark);margin-left:3px">/ ${p.thru}</span>` : ''}</td>
+      <td>${parDisp(p.toPar)}${p.thru > 0 && p.thru < 18 ? `<span style="font-size:.65rem;color:var(--grey-dark);margin-left:3px">/ ${p.thru}</span>` : ''}</td>
     </tr>`).join('');
 }
 
