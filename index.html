@@ -518,9 +518,9 @@ function toggleCollapse(id) {
   const body = document.getElementById('ebody-' + id);
   const btn = document.getElementById('ecoll-' + id);
   if (body && btn) {
-    const collapsed = collapsedEntries.has(id);
-    body.style.display = collapsed ? 'none' : 'block';
-    btn.textContent = collapsed ? '▶' : '▼';
+    const expanded = collapsedEntries.has(id);
+    body.style.display = expanded ? 'block' : 'none';
+    btn.textContent = expanded ? '▼' : '▶';
   }
 }
 
@@ -535,7 +535,7 @@ function renderEntries() {
     const co=combinedOdds(e);
     let bc='co-empty',bt='—';
     if (co!==null) { bc=co>=101?'co-ok':'co-low'; bt=(co>=101?'✓ ':'✗ ')+formatOdds(co); }
-    const collapsed = collapsedEntries.has(e.id);
+    const collapsed = !collapsedEntries.has(e.id);
     return `
     <div class="entry-row">
       <div class="entry-row-top">
