@@ -61,7 +61,7 @@
 
   .status-badge{display:inline-block;padding:1px 5px;border-radius:6px;font-size:.58rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;}
   .s-in{background:#d5f5e3;color:#1a6b3a;} .s-out{background:#fadbd8;color:#c0392b;} .s-watch{background:#fef9c3;color:#856404;}
-  .eliminated td{opacity:.45;} .eliminated td{background:#fdf5f4!important;}
+  .eliminated td{opacity:.7;}
 
   .entry-row{background:var(--white);border:1.5px solid var(--grey-mid);border-radius:8px;padding:10px 12px;margin-bottom:8px;}
   .entry-row-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
@@ -670,7 +670,7 @@ function renderLeaderboard() {
   }
 
   document.getElementById('lb-body').innerHTML = rows.map(r => {
-    const rowBg = r.eliminated ? 'background:#fde8e8' : '';
+    const rowBg = '';
     const c = r.combined;
     const totalColor = r.eliminated ? '#c0392b' : (c!==null && c < 0 ? '#1a6b3a' : c!==null && c > 0 ? '#c0392b' : '#555');
     const totalStr = c!==null ? (c===0 ? '0' : c>0 ? '+'+c : c) : '—';
