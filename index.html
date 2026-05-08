@@ -46,19 +46,19 @@
 
   .lb-meta{display:flex;justify-content:space-between;align-items:center;padding:4px 12px;background:var(--green-mid);color:rgba(240,208,128,.8);font-size:.65rem;}
   .lb-table{width:100%;border-collapse:collapse;font-size:.72rem;}
-  .lb-table th{background:var(--green-dark);color:var(--gold-light);padding:5px 5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:.6rem;text-align:center;white-space:nowrap;}
+  .lb-table th{background:var(--green-dark);color:var(--gold-light);padding:3px 4px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:.58rem;text-align:center;white-space:nowrap;}
   .lb-table th:nth-child(2){text-align:left;}
-  .lb-table td{padding:3px 5px;border-bottom:1px solid var(--grey-mid);text-align:center;background:var(--white);vertical-align:middle;}
+  .lb-table td{padding:1px 4px;border-bottom:1px solid var(--grey-mid);text-align:center;background:var(--white);vertical-align:middle;line-height:1.2;}
   .lb-table tr:nth-child(even) td{background:var(--grey-light);}
   .lb-table td:nth-child(2){text-align:left;font-weight:600;}
 
 
 
-  .score-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'EB Garamond',serif;font-size:.79rem;font-weight:500;}
+  .score-pill{display:inline-block;padding:1px 5px;border-radius:3px;font-family:'EB Garamond',serif;font-size:.7rem;font-weight:500;}
   .pill-ok{background:#d5f5e3;color:#1a6b3a;} .pill-na{background:var(--grey-light);color:var(--grey-dark);} .pill-cut{background:#fadbd8;color:#c0392b;font-style:italic;}
   .total-big{font-family:'EB Garamond',serif;font-size:.98rem;font-weight:700;color:var(--green-dark);}
 
-  .status-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.67rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .status-badge{display:inline-block;padding:1px 5px;border-radius:6px;font-size:.58rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;}
   .s-in{background:#d5f5e3;color:#1a6b3a;} .s-out{background:#fadbd8;color:#c0392b;} .s-watch{background:#fef9c3;color:#856404;}
   .eliminated td{opacity:.45;} .eliminated td{background:#fdf5f4!important;}
 
@@ -515,7 +515,8 @@ function renderEntries() {
     c.innerHTML='<p style="color:var(--grey-dark);text-align:center;padding:20px;font-size:.85rem">No entrants yet. Click "+ Add Entrant".</p>';
     return;
   }
-  c.innerHTML = entries.map((e,i) => {
+  const sorted = [...entries].sort((a,b) => (a.name||"").localeCompare(b.name||""));
+  c.innerHTML = sorted.map((e,i) => {
     const co=combinedOdds(e);
     let bc='co-empty',bt='—';
     if (co!==null) { bc=co>=101?'co-ok':'co-low'; bt=(co>=101?'✓ ':'✗ ')+formatOdds(co); }
