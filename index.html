@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PGA Championship Sweepstake 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -168,6 +169,7 @@
           <span class="save-ind" id="lb-flash"></span>
           <button class="btn btn-gold btn-sm" onclick="renderLeaderboard();flashSave('lb-flash','↻ Done')">↻ Refresh</button>
           <button class="btn btn-primary btn-sm" onclick="toggleExportMenu()">⬇ Export</button>
+          <button class="btn btn-gold btn-sm" id="copy-btn" onclick="copyLeaderboard()">📋 Copy Image</button>
         </div>
       </div>
       <div id="export-menu" style="display:none;background:#f0ede6;padding:6px 12px;border-bottom:1px solid var(--grey-mid);gap:8px;flex-wrap:wrap;align-items:center" class="flex-gap">
@@ -235,11 +237,11 @@
         </div>
       </div>
       <div style="padding:8px 16px;background:#f0ede6;border-bottom:1px solid var(--grey-mid);font-size:.78rem;color:var(--grey-dark)">
-        ℹ Copy player names exactly from this table when entering picks above.
+        ℹ Copy player names exactly from this table when entering picks above. &nbsp;|&nbsp; <strong>Test Cut</strong> button lets you simulate a player missing the cut — click again to undo.
       </div>
       <div style="overflow-x:auto">
         <table class="scores-table">
-          <thead><tr><th>Player</th><th>Cut?</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Total</th><th>To Par</th></tr></thead>
+          <thead><tr><th>Player</th><th>Cut?</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>Total</th><th>To Par</th><th>Test</th></tr></thead>
           <tbody id="scores-body">
             <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--grey-dark)">Select a tournament from the dropdown at the top and click ↻ Sync Now</td></tr>
           </tbody>
@@ -278,6 +280,7 @@
 
 <script>
 // ── State ────────────────────────────────────────────────────
+let cutOverrides = {}; // playerName.toLowerCase() -> true = manually cut
 let entries = [];
 let liveScores = {};   // key = lowercase name
 let availableEvents = [];
@@ -450,14 +453,19 @@ function renderScoresTable() {
     return `<span class="par-ov">+${n}</span>`;
   }
 
-  tbody.innerHTML = players.map(p => `
+  tbody.innerHTML = players.map(p => {
+    const manualCut = cutOverrides[p.name.toLowerCase()];
+    const effectiveCut = manualCut ? 'N' : p.cut;
+    return `
     <tr>
       <td style="font-weight:600">${esc(p.name)}</td>
-      <td>${cutB(p.cut)}</td>
+      <td>${cutB(effectiveCut)}</td>
       <td>${rnd(p.r1)}</td><td>${rnd(p.r2)}</td><td>${rnd(p.r3)}</td><td>${rnd(p.r4)}</td>
       <td style="font-family:'EB Garamond',serif;font-weight:700">${p.total !== null ? p.total : '—'}</td>
       <td>${parDisp(p.toPar)}${p.thru > 0 && p.thru < 18 ? `<span style="font-size:.65rem;color:var(--grey-dark);margin-left:3px">/ ${p.thru}</span>` : ''}</td>
-    </tr>`).join('');
+      <td><button onclick="toggleCutOverride('${p.name.replace(/'/g,"\'")}',this)" style="font-size:.65rem;padding:2px 6px;border-radius:4px;border:1px solid #d0cbc0;cursor:pointer;background:${manualCut?'#fadbd8':'#f4f1eb'};color:${manualCut?'#c0392b':'#6b6560'}">${manualCut?'✕ Uncut':'✂ Test Cut'}</button></td>
+    </tr>`;
+  }).join('');
 }
 
 // ── Entries ───────────────────────────────────────────────────
@@ -602,7 +610,13 @@ function renderEntries() {
 // ── Leaderboard ───────────────────────────────────────────────
 function getScore(name) {
   if (!name||!name.trim()) return null;
-  return liveScores[name.trim().toLowerCase()] || null;
+  const s = liveScores[name.trim().toLowerCase()];
+  if (!s) return null;
+  // Apply manual cut override for testing
+  if (cutOverrides[name.trim().toLowerCase()]) {
+    return {...s, cut:'N'};
+  }
+  return s;
 }
 
 function renderLeaderboard() {
@@ -690,7 +704,71 @@ function renderLeaderboard() {
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function flashSave(id,msg){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2000);}
 
+
+function toggleCutOverride(name, btn) {
+  const key = name.toLowerCase();
+  if (cutOverrides[key]) {
+    delete cutOverrides[key];
+  } else {
+    cutOverrides[key] = true;
+  }
+  renderScoresTable();
+  renderLeaderboard();
+}
+
 // ── Export ───────────────────────────────────────────────────
+
+function copyLeaderboard() {
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = '⏳ Capturing…';
+  btn.disabled = true;
+
+  // Temporarily hide buttons in card header for clean capture
+  const exportMenu = document.getElementById('export-menu');
+  const wasVisible = exportMenu.style.display;
+  exportMenu.style.display = 'none';
+
+  const target = document.querySelector('#tab-leaderboard .card');
+
+  html2canvas(target, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: null,
+    logging: false
+  }).then(canvas => {
+    exportMenu.style.display = wasVisible;
+    canvas.toBlob(blob => {
+      if (navigator.clipboard && navigator.clipboard.write) {
+        navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob })
+        ]).then(() => {
+          btn.textContent = '✓ Copied!';
+          setTimeout(() => { btn.textContent = '📋 Copy Image'; btn.disabled = false; }, 2000);
+        }).catch(() => {
+          // Fallback: download instead
+          downloadCanvas(canvas, btn);
+        });
+      } else {
+        downloadCanvas(canvas, btn);
+      }
+    }, 'image/png');
+  }).catch(() => {
+    exportMenu.style.display = wasVisible;
+    btn.textContent = '📋 Copy Image';
+    btn.disabled = false;
+    alert('Could not capture — try the PDF export instead.');
+  });
+}
+
+function downloadCanvas(canvas, btn) {
+  const a = document.createElement('a');
+  a.download = 'PGA_Sweepstake_Leaderboard.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  btn.textContent = '✓ Downloaded!';
+  setTimeout(() => { btn.textContent = '📋 Copy Image'; btn.disabled = false; }, 2000);
+}
+
 function toggleExportMenu() {
   const m = document.getElementById('export-menu');
   m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
