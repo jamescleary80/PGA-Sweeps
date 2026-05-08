@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PGA Championship Sweepstake 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -107,6 +108,26 @@
     .lb-table .hm{display:none;}
     .lb-table td,.lb-table th{padding:6px 4px;font-size:.72rem;}
   }
+
+<style id="print-css">
+@media print {
+  @page { size: landscape; margin: 8mm; }
+  .tabs,.sync-bar,.tab-panel:not(#tab-leaderboard),.card-header .btn,.card-header .save-ind,#export-menu { display: none !important; }
+  #tab-leaderboard { display: block !important; }
+  .container { padding: 0 !important; max-width: 100% !important; }
+  .card { box-shadow: none !important; margin-bottom: 4px !important; border-radius: 4px !important; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .site-header { padding: 5px 12px !important; }
+  .site-header::before { display: none; }
+  .lb-table td, .lb-table th { font-size: 7pt !important; padding: 1px 4px !important; }
+  .lb-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .lb-table td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .card-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 4px 12px !important; }
+  .lb-meta { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 2px 12px !important; }
+  .pill-ok, .pill-cut, .pill-na, .s-in, .s-out, .s-watch { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .eliminated td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
 </style>
 </head>
 <body>
@@ -146,7 +167,14 @@
         <div class="flex-gap">
           <span class="save-ind" id="lb-flash"></span>
           <button class="btn btn-gold btn-sm" onclick="renderLeaderboard();flashSave('lb-flash','↻ Done')">↻ Refresh</button>
+          <button class="btn btn-primary btn-sm" onclick="toggleExportMenu()">⬇ Export</button>
         </div>
+      </div>
+      <div id="export-menu" style="display:none;background:#f0ede6;padding:6px 12px;border-bottom:1px solid var(--grey-mid);gap:8px;flex-wrap:wrap;align-items:center" class="flex-gap">
+        <span style="font-size:.78rem;color:var(--grey-dark);font-weight:600">Export as:</span>
+        <button class="btn btn-primary btn-sm" onclick="exportExcel()">📊 Excel</button>
+        <button class="btn btn-primary btn-sm" onclick="exportPDF()">📄 PDF / Print</button>
+        <button class="btn btn-sm" onclick="toggleExportMenu()" style="background:var(--grey-mid)">✕</button>
       </div>
       <div class="lb-meta">
         <span id="lb-event-name">PGA Championship 2026 · Sweepstake</span>
@@ -661,6 +689,175 @@ function renderLeaderboard() {
 // ── Helpers ───────────────────────────────────────────────────
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function flashSave(id,msg){const el=document.getElementById(id);if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2000);}
+
+// ── Export ───────────────────────────────────────────────────
+function toggleExportMenu() {
+  const m = document.getElementById('export-menu');
+  m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+}
+function exportExcel() {
+  const valid = entries.filter(e => e.name.trim());
+  let pos = 1;
+
+  const fmt = (s) => {
+    if (!s) return '?';
+    if (s.cut==='N') return 'MC';
+    if (s.cut==='WD') return 'WD';
+    if (s.toPar===null) return '—';
+    return s.toPar===0?'0':s.toPar>0?'+'+s.toPar:String(s.toPar);
+  };
+  const scoreBg = (s) => {
+    if (!s||s.toPar===null) return '#f4f1eb';
+    if (s.cut==='N'||s.cut==='WD') return '#fadbd8';
+    if (s.toPar<0) return '#d5f5e3';
+    if (s.toPar>0) return '#fadbd8';
+    return '#f4f1eb';
+  };
+  const scoreColor = (s) => {
+    if (!s||s.toPar===null) return '#666';
+    if (s.cut==='N'||s.cut==='WD') return '#c0392b';
+    if (s.toPar<0) return '#1a6b3a';
+    if (s.toPar>0) return '#c0392b';
+    return '#555';
+  };
+
+  let tableRows = '';
+  valid.forEach((e, i) => {
+    const s1=getScore(e.p1), s2=getScore(e.p2), s3=getScore(e.p3);
+    const eliminated = [s1,s2,s3].some(s => s&&(s.cut==='N'||s.cut==='WD'));
+    const pars = [s1,s2,s3].map(s => s&&s.toPar!==null?s.toPar:null);
+    const combined = pars.some(v=>v!==null) ? pars.filter(v=>v!==null).reduce((a,b)=>a+b,0) : null;
+    const totalStr = combined===null?'—':combined===0?'0':combined>0?'+'+combined:String(combined);
+    const totalCol = eliminated?'#c0392b':combined!==null&&combined<0?'#1a6b3a':combined!==null&&combined>0?'#c0392b':'#1a1510';
+    const rowBg = eliminated ? '#fdf5f4' : i%2===0 ? '#ffffff' : '#f4f1eb';
+    const posStr = eliminated ? 'OUT' : String(pos++);
+
+    const sc = (s,p) => `<td style="background:${scoreBg(s)};color:${scoreColor(s)};font-weight:700;text-align:center;padding:4px 6px;border:1px solid #d0cbc0">${fmt(s)}</td>
+      <td style="background:${scoreBg(s)};color:#1a1510;text-align:left;padding:4px 8px;border:1px solid #d0cbc0">${p||''}</td>`;
+
+    tableRows += `<tr style="background:${rowBg};opacity:${eliminated?0.6:1}">
+      <td style="text-align:center;font-weight:700;padding:4px 6px;border:1px solid #d0cbc0;color:#333">${posStr}</td>
+      <td style="font-weight:700;padding:4px 10px;border:1px solid #d0cbc0;color:#1a1510">${e.name}</td>
+      <td style="text-align:center;font-weight:800;font-size:11pt;padding:4px 6px;border:1px solid #d0cbc0;color:${totalCol}">${totalStr}</td>
+      ${sc(s1,e.p1)}${sc(s2,e.p2)}${sc(s3,e.p3)}
+    </tr>`;
+  });
+
+  const eventName = document.getElementById('lb-event-name').textContent;
+  const date = document.getElementById('lb-date').textContent;
+
+  const xlsHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8">
+<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+<x:Name>Leaderboard</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+</head><body>
+<table style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:9pt;width:100%">
+  <tr>
+    <td colspan="9" style="background:#0a3d1f;color:#f0d080;font-size:13pt;font-weight:bold;padding:8px 14px;text-align:center">🏆 ${eventName}</td>
+  </tr>
+  <tr>
+    <td colspan="9" style="background:#1a6b3a;color:rgba(240,208,128,0.85);font-size:8pt;padding:3px 14px;text-align:right">${date}</td>
+  </tr>
+  <tr style="background:#0a3d1f">
+    <th style="color:#f0d080;padding:5px 6px;border:1px solid #c9a84c;text-align:center;font-size:8pt">Pos</th>
+    <th style="color:#f0d080;padding:5px 10px;border:1px solid #c9a84c;text-align:left;font-size:8pt">Entrant</th>
+    <th style="color:#f0d080;padding:5px 6px;border:1px solid #c9a84c;text-align:center;font-size:8pt">Total</th>
+    <th style="color:#f0d080;padding:5px 6px;border:1px solid #c9a84c;text-align:center;font-size:8pt">S</th>
+    <th style="color:#f0d080;padding:5px 10px;border:1px solid #c9a84c;text-align:left;font-size:8pt">Pick 1</th>
+    <th style="color:#f0d080;padding:5px 6px;border:1px solid #c9a84c;text-align:center;font-size:8pt">S</th>
+    <th style="color:#f0d080;padding:5px 10px;border:1px solid #c9a84c;text-align:left;font-size:8pt">Pick 2</th>
+    <th style="color:#f0d080;padding:5px 6px;border:1px solid #c9a84c;text-align:center;font-size:8pt">S</th>
+    <th style="color:#f0d080;padding:5px 10px;border:1px solid #c9a84c;text-align:left;font-size:8pt">Pick 3</th>
+  </tr>
+  ${tableRows}
+</table>
+</body></html>`;
+
+  const blob = new Blob([xlsHtml], {type:'application/vnd.ms-excel;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'PGA_Sweepstake_Leaderboard.xls';
+  a.click();
+  URL.revokeObjectURL(url);
+  toggleExportMenu();
+}
+function exportPDF() {
+  toggleExportMenu();
+
+  // Build a self-contained printable HTML page
+  const rows = document.querySelectorAll('#lb-body tr');
+  let tableRows = '';
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    let rowHtml = '<tr>';
+    cells.forEach(cell => {
+      const bg = cell.style.background || '';
+      const txt = cell.innerHTML;
+      rowHtml += `<td style="background:${bg || 'white'};-webkit-print-color-adjust:exact;print-color-adjust:exact">${txt}</td>`;
+    });
+    rowHtml += '</tr>';
+    tableRows += rowHtml;
+  });
+
+  const eventName = document.getElementById('lb-event-name').textContent;
+  const date = document.getElementById('lb-date').textContent;
+
+  const printHtml = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PGA Sweepstake Leaderboard</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  @page { size: landscape; margin: 8mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'EB Garamond', serif; background: #0a3d1f; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .header { background: linear-gradient(135deg,#0a3d1f 0%,#0f4d28 60%,#1a6b3a 100%); padding: 8px 16px; text-align: center; border-bottom: 3px solid #c9a84c; }
+  .header h1 { color: #f0d080; font-size: 1.3rem; }
+  .meta { background: #1a6b3a; display: flex; justify-content: space-between; padding: 3px 14px; color: rgba(240,208,128,.8); font-size: .7rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 7.5pt; background: white; }
+  th { background: #0a3d1f; color: #f0d080; padding: 4px 5px; font-weight: 600; text-transform: uppercase; font-size: 6.5pt; letter-spacing: .04em; text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  th:nth-child(2) { text-align: left; }
+  td { padding: 2px 5px; border-bottom: 1px solid #d0cbc0; text-align: center; vertical-align: middle; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  td:nth-child(2) { text-align: left; font-weight: 600; }
+  tr:nth-child(even) td { background: #f4f1eb; }
+  .pill-ok { display:inline-block;padding:1px 5px;border-radius:3px;background:#d5f5e3;color:#1a6b3a;font-weight:500; }
+  .pill-cut { display:inline-block;padding:1px 5px;border-radius:3px;background:#fadbd8;color:#c0392b;font-style:italic; }
+  .pill-na { display:inline-block;padding:1px 5px;border-radius:3px;background:#f4f1eb;color:#6b6560; }
+  .s-in { display:inline-block;padding:1px 5px;border-radius:6px;background:#d5f5e3;color:#1a6b3a;font-weight:700;font-size:6pt;text-transform:uppercase; }
+  .s-out { display:inline-block;padding:1px 5px;border-radius:6px;background:#fadbd8;color:#c0392b;font-weight:700;font-size:6pt;text-transform:uppercase; }
+  .s-watch { display:inline-block;padding:1px 5px;border-radius:6px;background:#fef9c3;color:#856404;font-weight:700;font-size:6pt;text-transform:uppercase; }
+  .eliminated td { opacity: .5; background: #fdf5f4 !important; }
+  @media print { body { margin: 0; } }
+</style>
+</head>
+<body>
+  <div class="header"><h1>🏆 ${eventName}</h1></div>
+  <div class="meta"><span>${eventName}</span><span>${date}</span></div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:35px">Pos</th>
+        <th style="text-align:left">Entrant</th>
+        <th style="width:50px">Total</th>
+        <th>Pick 1</th><th style="width:40px">S</th>
+        <th>Pick 2</th><th style="width:40px">S</th>
+        <th>Pick 3</th><th style="width:40px">S</th>
+      </tr>
+    </thead>
+    <tbody>${tableRows}</tbody>
+  </table>
+  <script>window.onload = () => { window.print(); }<\/script>
+</body>
+</html>`;
+
+  const w = window.open('', '_blank');
+  w.document.write(printHtml);
+  w.document.close();
+}
+
 
 // ── Init ─────────────────────────────────────────────────────
 load();
