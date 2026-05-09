@@ -134,7 +134,7 @@
 <body>
 
 <header class="site-header">
-  <h1>🏆 PGA Championship 2026</h1>
+  <h1>🏆 <span id="header-event-name">Sweepstake 2026</span></h1>
   <p class="sub">Quail Hollow · May 15–18, 2026</p>
   <div><span class="live-badge"><span class="live-dot"></span>Live Scores via ESPN</span></div>
 </header>
@@ -335,10 +335,11 @@ async function loadEventList() {
       sel.appendChild(opt);
     });
 
-    // Auto-select PGA Championship if present and nothing chosen yet
-    if (!selectedEventId) {
-      const pga = availableEvents.find(e => e.name.toLowerCase().includes('pga championship'));
-      if (pga) { sel.value = pga.id; selectedEventId = pga.id; save(); }
+    // Auto-select first available event if nothing chosen yet
+    if (!selectedEventId && availableEvents.length > 0) {
+      sel.value = availableEvents[0].id;
+      selectedEventId = availableEvents[0].id;
+      save();
     }
 
     setSyncState('ok', 'Ready');
@@ -359,6 +360,7 @@ async function fetchScores(manual) {
     if (!event) { setSyncState('err', 'Tournament not found in feed'); return; }
 
     document.getElementById('lb-event-name').textContent = event.name + ' · Sweepstake';
+    document.getElementById('header-event-name').textContent = event.name + ' 2026';
 
     const competitors = event.competitions[0].competitors || [];
     liveScores = {};
