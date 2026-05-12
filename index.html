@@ -875,7 +875,7 @@ function exportPDF() {
     cells.forEach(cell => {
       const bg = cell.style.background || '';
       const txt = cell.innerHTML;
-      rowHtml += `<td style="background:${bg || 'white'};-webkit-print-color-adjust:exact;print-color-adjust:exact">${txt}</td>`;
+      rowHtml += `<td style="background:${bg || 'white'};-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:2px 4px;font-size:.72rem">${txt}</td>`;
     });
     rowHtml += '</tr>';
     tableRows += rowHtml;
