@@ -679,7 +679,7 @@ function renderLeaderboard() {
     const scoreBg = cut ? '#e57373' : '#ffee58';
     const scoreColor = cut ? 'white' : '#1a3a0a';
     const label = cut ? (s.cut==='WD'?'WD':'MC') : (s.toPar!==null?scoreVal:'—');
-    return `<td style="background:${nameBg};font-size:.75rem;font-weight:600;padding:5px 7px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'EB Garamond',serif;font-weight:700;font-size:.88rem">${label}</td>`;
+    return `<td style="background:${nameBg};font-size:.72rem;font-weight:600;padding:1px 4px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'EB Garamond',serif;font-weight:700;font-size:.88rem">${label}</td>`;
   }
   function posBadge(p) {
     return `<span style="font-weight:700;font-size:.75rem">${p}</span>`;
