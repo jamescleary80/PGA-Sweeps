@@ -48,9 +48,9 @@
 
   .lb-meta{display:flex;justify-content:space-between;align-items:center;padding:4px 12px;background:var(--green-mid);color:rgba(240,208,128,.8);font-size:.65rem;}
   .lb-table{width:100%;border-collapse:collapse;font-size:.72rem;}
-  .lb-table th{background:var(--green-dark);color:var(--gold-light);padding:3px 4px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:.58rem;text-align:center;white-space:nowrap;}
+  .lb-table th{background:var(--green-dark);color:var(--gold-light);padding:2px 3px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;font-size:.56rem;text-align:center;white-space:nowrap;}
   .lb-table th:nth-child(2){text-align:left;}
-  .lb-table td{padding:1px 4px;border-bottom:1px solid var(--grey-mid);text-align:center;background:var(--white);vertical-align:middle;line-height:1.2;}
+  .lb-table td{padding:0px 3px;border-bottom:1px solid var(--grey-mid);text-align:center;background:var(--white);vertical-align:middle;line-height:1;font-size:.68rem;}
   .lb-table tr:nth-child(even) td{background:var(--grey-light);}
   .lb-table td:nth-child(2){text-align:left;font-weight:600;}
 
@@ -679,7 +679,7 @@ function renderLeaderboard() {
     const scoreBg = cut ? '#e57373' : '#ffee58';
     const scoreColor = cut ? 'white' : '#1a3a0a';
     const label = cut ? (s.cut==='WD'?'WD':'MC') : (s.toPar!==null?scoreVal:'—');
-    return `<td style="background:${nameBg};font-size:.72rem;font-weight:600;padding:1px 4px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'EB Garamond',serif;font-weight:700;font-size:.88rem">${label}</td>`;
+    return `<td style="background:${nameBg};font-size:.68rem;font-weight:600;padding:0px 3px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'EB Garamond',serif;font-weight:700;font-size:.88rem">${label}</td>`;
   }
   function posBadge(p) {
     return `<span style="font-weight:700;font-size:.75rem">${p}</span>`;
@@ -692,9 +692,9 @@ function renderLeaderboard() {
     const totalStr = c!==null ? (c===0 ? '0' : c>0 ? '+'+c : c) : '—';
     return `
     <tr style="${rowBg}">
-      <td style="text-align:center">${posBadge(r.pos)}</td>
-      <td style="font-weight:700;font-size:.88rem">${esc(r.e.name)}</td>
-      <td style="font-family:'EB Garamond',serif;font-weight:800;font-size:1.1rem;color:${totalColor};text-align:center">${totalStr}</td>
+      <td style="text-align:center;padding:0px 3px">${posBadge(r.pos)}</td>
+      <td style="font-weight:700;font-size:.68rem;padding:0px 3px">${esc(r.e.name)}</td>
+      <td style="font-family:'EB Garamond',serif;font-weight:800;font-size:.8rem;color:${totalColor};text-align:center;padding:0px 3px">${totalStr}</td>
       ${pickCells(r.s1,r.e.p1)}
       ${pickCells(r.s2,r.e.p2)}
       ${pickCells(r.s3,r.e.p3)}
