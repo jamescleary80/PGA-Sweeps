@@ -50,7 +50,7 @@
   .lb-table{width:100%;border-collapse:collapse;font-size:.72rem;}
   .lb-table th{background:var(--green-dark);color:var(--gold-light);padding:2px 3px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;font-size:.56rem;text-align:center;white-space:nowrap;}
   .lb-table th:nth-child(2){text-align:left;}
-  .lb-table td{padding:2px 3px;border-bottom:1px solid var(--grey-mid);text-align:center;background:var(--white);vertical-align:middle;line-height:1.4;font-size:.68rem;}
+  .lb-table td{padding:1px 3px;border-bottom:1px solid var(--grey-mid);text-align:center;background:var(--white);vertical-align:middle;line-height:1.1;font-size:.68rem;}
   .lb-table tr:nth-child(even) td{background:var(--grey-light);}
   .lb-table td:nth-child(2){text-align:left;font-weight:600;}
 
@@ -107,7 +107,7 @@
   @media(max-width:600px){
     .players-grid{grid-template-columns:1fr;padding-left:0;margin-top:6px;}
     .lb-table .hm{display:none;}
-    .lb-table td,.lb-table th{padding:6px 4px;font-size:.72rem;}
+    .lb-table td,.lb-table th{padding:2px 3px;font-size:.68rem;}
   }
 
 <style id="print-css">
@@ -679,7 +679,7 @@ function renderLeaderboard() {
     const scoreBg = cut ? '#e57373' : '#ffee58';
     const scoreColor = cut ? 'white' : '#1a3a0a';
     const label = cut ? (s.cut==='WD'?'WD':'MC') : (s.toPar!==null?scoreVal:'—');
-    return `<td style="background:${nameBg};font-size:.68rem;font-weight:600;padding:0px 3px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'EB Garamond',serif;font-weight:700;font-size:.88rem">${label}</td>`;
+    return `<td style="background:${nameBg};font-size:.68rem;font-weight:600;padding:0px 3px">${esc(pname)}${cut?` <span style="font-size:.65rem;font-weight:700;color:#c0392b">(${s.cut==='WD'?'WD':'MC'})</span>`:''}</td><td style="background:${scoreBg};color:${scoreColor};font-family:'EB Garamond',serif;font-weight:700;font-size:.68rem;padding:0px 3px">${label}</td>`;
   }
   function posBadge(p) {
     return `<span style="font-weight:700;font-size:.75rem">${p}</span>`;
