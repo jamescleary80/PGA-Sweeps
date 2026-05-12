@@ -671,8 +671,8 @@ function renderLeaderboard() {
   function pickCells(s, pname) {
     // Returns two <td>s: player name cell + score cell
     // Colour: yellow bg if alive, red bg if cut/WD, grey if unknown
-    if (!pname||!pname.trim()) return `<td style="background:#e0e0e0;color:#999;font-size:.75rem">—</td><td style="background:#e0e0e0;color:#999">—</td>`;
-    if (!s) return `<td style="background:#ffe082;font-size:.75rem;font-weight:600" title="Check spelling">${esc(pname)}</td><td style="background:#ffe082">?</td>`;
+    if (!pname||!pname.trim()) return `<td style="background:#e0e0e0;color:#999;font-size:.68rem;padding:0px 3px">—</td><td style="background:#e0e0e0;color:#999;padding:0px 3px">—</td>`;
+    if (!s) return `<td style="background:#ffe082;font-size:.68rem;font-weight:600;padding:0px 3px" title="Check spelling">${esc(pname)}</td><td style="background:#ffe082;padding:0px 3px">?</td>`;
     const cut = s.cut==='N'||s.cut==='WD';
     const nameBg = cut ? '#ef9a9a' : '#fff59d';
     const scoreVal = s.toPar!==null ? (s.toPar===0?'0':s.toPar>0?'+'+s.toPar:s.toPar) : '—';
